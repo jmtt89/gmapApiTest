@@ -1,0 +1,40 @@
+html, body { height: 100%; margin: 0; padding: 0; }
+#map { height: 100%; }
+.fullHeight{
+  height: 100%;
+}
+
+.title{
+  margin: 20px 0 15px 0;
+}
+
+.title > *{
+  margin: 0px;
+}
+
+.title > h3{
+  margin-top: 2%;
+}
+
+.title .btn{
+  border-radius: 50px;
+  font-size: large;
+  margin-right: 4%;
+}
+
+.btn{
+  margin-right: 4%;
+}
+
+input[type="color"]{
+  padding: 0 !important;
+  width: 30px !important;
+}
+
+#controls{
+  padding: 0 2%;
+}
+
+#newCircle{
+  height: 120%;
+}
