@@ -9,3 +9,4 @@
 64.242.88.10 - - [07/Mar/2004:16:30:29 -0800] "GET /twiki/bin/attach/Main/OfficeLocations?latitude=8.600349&longitude=-71.141838 HTTP/1.1" 401 12851
 64.242.88.10 - - [07/Mar/2004:16:30:29 -0800] "GET /twiki/bin/attach/Main/OfficeLocations?latitude=8.600453&longitude=-71.141926 HTTP/1.1" 401 12851
 64.242.88.10 - - [07/Mar/2004:16:30:29 -0800] "GET /twiki/bin/attach/Main/OfficeLocations?latitude=8.600453&longitude=-71.141926 HTTP/1.1" 401 12851
+64.242.88.10 - - [07/Mar/2004:16:30:29 -0800] "GET /twiki/bin/attach/Main/OfficeLocations?latitude=8.600453&longitude=-71.141980 HTTP/1.1" 401 12851
