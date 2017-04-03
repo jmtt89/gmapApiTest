@@ -8,3 +8,4 @@
 64.242.88.10 - - [07/Mar/2004:16:29:16 -0800] "GET /twiki/bin/edit/Main/Header_checks?topicparent=Main.ConfigurationVariables&latitude=10.4461400&longitude=-66.8636755 HTTP/1.1" 401 12851
 64.242.88.10 - - [07/Mar/2004:16:30:29 -0800] "GET /twiki/bin/attach/Main/OfficeLocations?latitude=10.4461401&longitude=-66.8636756 HTTP/1.1" 401 12851
 64.242.88.10 - - [07/Mar/2004:16:30:29 -0800] "GET /twiki/bin/attach/Main/OfficeLocations?latitude=10.4461402&longitude=-66.8636757 HTTP/1.1" 401 12851
+64.242.88.10 - - [07/Mar/2004:16:30:29 -0800] "GET /twiki/bin/attach/Main/OfficeLocations?latitude=10.4461410&longitude=-66.8636780 HTTP/1.1" 401 12851
