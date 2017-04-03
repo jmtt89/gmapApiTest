@@ -1,6 +1,7 @@
 console.log('\'Allo \'Allo!');
 var map, marker;
 var lat,lon;
+var loadByFile = true;
 
 var geodesicPoly,startP,endP;
 
@@ -67,16 +68,45 @@ function calcDistance(pointA,pointB) {
 
   console.log(distance);
   return distance;
-  // body...
 }
 
-function addMarker(lat,lng) {
+function addMarker(lat, lng) {
+  var latitude = new Number(lat).valueOf();
+  var longitude = new Number(lng).valueOf();
+  var flag = false;
+  for (var index = 0; index < markers.length; index++) {
+    var marker = markers[index];
+    
+    if(latitude.toFixed(8) == marker.getPosition().lat().toFixed(8) && longitude.toFixed(8) == marker.getPosition().lng().toFixed(8)){
+      flag = true;
+      break;
+    }
+  }
+  if(!flag){
+    var marker = new google.maps.Marker({
+      title: ""+(markers.length + 1),
+      position: new google.maps.LatLng({lat:latitude, lng:longitude}),
+      map: map
+    });
+    markers.push(marker);
+    addDisplayMarker(lat, lng)
+  }
+}
 
-  var marker = new google.maps.Marker({
-    position: {lat:lat,lng:lng},
-    map: map
+function addDisplayMarker(lat, lng) {
+  var index = markers.length - 1;
+
+  var tmp = '<tr id="marker-'+index+'"><td>'+lat+'</td><td>'+lng+'</td><td><input class="checkbox" index="'+index+'" type="checkbox" checked/></td></tr>';
+  $("#markerTable > tbody").append(tmp);
+
+  $("#markerTable .checkbox").change(function() {
+    var index = parseInt($(this).attr("index"));
+    if(this.checked) {
+      showMarker(index);
+    }else{
+      hideMarker(index);
+    }
   });
-  markers.push(marker);
 }
 
 function hideMarker(idx) {
@@ -96,7 +126,7 @@ function addCircle(lat,lon,rad,color) {
     fillColor: color,
     fillOpacity: 0.15,
     map: map,
-    center: {lat:lat,lng:lon},
+    center: {lat:lat, lng:lon},
     radius: rad
   });
   circles.push(circle);
@@ -126,8 +156,59 @@ function initMap(argument) {
   }
 }
 
+function parserCoordinate(text, coordRegExp, sepRegExp){
+  if(coordRegExp.test(text)){
+    var token;
+    var tokens = text.split(coordRegExp);
+    token = tokens[tokens.length-1];
+    return new Number(token.split(sepRegExp)[0]);
+  }
+  return null;
+}
+
+function processMarker(lines){
+  $("#showPreview > tbody").empty();
+  var assignator = $("#assignator").val();
+  var latRegexp = new RegExp("latitude("+assignator+")");
+  var lngRegexp = new RegExp("longitude("+assignator+")");
+
+  var separator = $("#separator").val();
+  var sepRegExp = new RegExp("("+separator+")");
+  var latitude, longitude;
+
+  for (var index = 0; index < lines.length; index++) {
+    var line = lines[index];
+    latitude = parserCoordinate(line, latRegexp, sepRegExp);
+    longitude = parserCoordinate(line, lngRegexp, sepRegExp);
+    if(latitude && longitude){
+      addPreloadCoordinateToView(latitude, longitude);
+    } else {
+      console.log("NOT Latitude or Longitude in line"+ index);
+    }
+
+  }
+  $('#showPreview').show();
+}
+
+function addPreloadCoordinateToView(lat, lng){
+    var tmp = '<tr><td>'+lat+'</td><td>'+lng+'</td></tr>';
+    $("#showPreview > tbody").append(tmp);
+}
+
+
 
 $(function() {
+  $("#showPeriod").hide();
+  $('#showPreview').hide();
+  if(loadByFile){
+    $("#markerByFile").show();
+    $("#markerByUrL").hide();
+  }else{
+    $("#markerByFile").hide();
+    $("#markerByUrL").show();
+  }
+
+  
 
   $("#sendFocus").click(function(event){
     event.preventDefault();
@@ -159,24 +240,9 @@ $(function() {
   $("#newMarker").click(function(){
     var lat = parseFloat($("#latNewMarker").val());
     var lng = parseFloat($("#lngNewMarker").val());
-    var index = markers.length;
     addMarker(lat,lng);
-
     $("#latNewMarker").val("");
     $("#lngNewMarker").val("");
-
-    var tmp = '<tr id="marker-'+index+'"><td>'+lat+'</td><td>'+lng+'</td><td><input class="checkbox" index="'+index+'" type="checkbox" checked/></td></tr>';
-    $("#markerTable > tbody").append(tmp);
-
-    $("#markerTable .checkbox").change(function() {
-      var index = parseInt($(this).attr("index"));
-      if(this.checked) {
-        showMarker(index);
-      }else{
-        hideMarker(index);
-      }
-    });
-
   })
 
   $("#newCircle").click(function(){
@@ -202,6 +268,90 @@ $(function() {
         hideCircle(index);
       }
     });
+  })
+
+  $("#makersFile").change(function(){
+    var reader = new FileReader();
+    reader.onload = function(event){
+      var file = event.target.result;
+      var allLines = file.split(/\r\n|\n/);
+      processMarker(allLines);    
+    };
+    reader.onerror = function(evt){
+      console.log(evt.target.error.name);
+    };
+    var file = this.files[0]
+    reader.readAsText(file);
+  })
+
+  $("#markerByUrL").submit(function(event) {
+    event.preventDefault();
+    var url = $("#markerUrl").val();
+    $.get(url, function(text) {
+      var allLines = text.split(/\r\n|\n/);
+      processMarker(allLines);
+    });
+  })
+
+  $("#showLoadByFile").click(function(){
+    loadByFile = true;
+    $("#showLoadByFile").addClass("btn-primary");
+    $("#showLoadByFile").removeClass("btn-default");
+    $("#showLoadByUrl").removeClass("btn-primary");
+    $("#showLoadByUrl").addClass("btn-default");
+    $("#markerByFile").show();
+    $("#markerByUrL").hide();
+  })
+
+  $("#showLoadByUrl").click(function(){
+    loadByFile = false;
+    $("#showLoadByFile").removeClass("btn-primary");
+    $("#showLoadByFile").addClass("btn-default");
+    $("#showLoadByUrl").addClass("btn-primary");
+    $("#showLoadByUrl").removeClass("btn-default");
+    $("#markerByFile").hide();
+    $("#markerByUrL").show();
+  })
+
+  $("#markerSingleUse").change(function(event){
+    $("#showPeriod").toggle();
+  })
+
+  $("#loadMarkers").click(function(){
+    if(loadByFile || singleUse){
+      $("#showPreview > tbody > tr").each(function (indx, element) {
+        var latitude = $(element).find("td").eq(0).html();
+        var longitude = $(element).find("td").eq(1).html(); 
+        addMarker(latitude, longitude);        
+      });
+    } else {
+      var singleUse = $("#markerSingleUse").prop('checked');
+      if(!singleUse){
+        var period = new Number($("#markerLoadPeriod").val());
+        setInterval(function(){
+          var url = $("#markerUrl").val();
+          $.get(url, function(text) {
+            var latitude, longitude;
+            var assignator = $("#assignator").val();
+            var latRegexp = new RegExp("latitude("+assignator+")");
+            var lngRegexp = new RegExp("longitude("+assignator+")");
+
+            var separator = $("#separator").val();
+            var sepRegExp = new RegExp("("+separator+")");
+
+            var allLines = text.split(/\r\n|\n/);
+            for (var index = 0; index < allLines.length; index++) {
+              var line = allLines[index];
+              latitude = parserCoordinate(line, latRegexp, sepRegExp);
+              longitude = parserCoordinate(line, lngRegexp, sepRegExp);
+              if(latitude && longitude){
+                addMarker(latitude, longitude);
+              }
+            }
+          });
+        },  period);
+      }
+    }
   })
 
 });

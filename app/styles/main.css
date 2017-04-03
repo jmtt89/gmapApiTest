@@ -31,6 +31,15 @@ input[type="color"]{
   width: 30px !important;
 }
 
+.advanceSetup .form-group{
+    margin-bottom: 0;
+}
+
+.maxHeight{
+  max-height: 120px;
+  overflow: auto;
+}
+
 #controls{
   padding: 0 2%;
 }
@@ -38,3 +47,4 @@ input[type="color"]{
 #newCircle{
   height: 120%;
 }
+

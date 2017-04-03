@@ -101,6 +101,7 @@
             <div role="tabpanel" class="tab-pane fade" id="draw">
               <div class="title row">
                 <h3 class="pull-left">Markers</h3>
+                <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#addMakers">Parse</button>                
               </div>
 
               <form class="form-horizontal">
@@ -170,7 +171,105 @@
       </div>
     </div>
 
+    <!-- Add Makers -->
+    <div class="modal fade" id="addMakers" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+            <h4 class="modal-title">Add Makers</h4>
+          </div>
+          <div class="modal-body">
+            
+            <legend>
+              The format can be any, provided that the same line includes "latitude" and "longitude" used the operators described below.
+            </legend>
 
+            <form class="advanceSetup row">
+              <div class="form-group col-xs-6">
+                <label class="control-label col-xs-6">Separator</label>
+                <div class="col-xs-6">
+                  <input id="separator" type="string" class="form-control text-right" value="\s|&">
+                </div>
+              </div>
+              <div class="form-group col-xs-6">
+                <label class="control-label col-xs-6">Assignment operator</label>
+                <div  class="col-xs-6">
+                  <input id="assignator" type="string" class="form-control text-right" value="=">
+                </div>
+              </div>
+            </form>
+
+            <div class="btn-group btn-group-justified" role="group">
+              <div class="btn-group" role="group">
+                <button id="showLoadByFile" type="button" class="btn btn-primary">Add Markers by File</button>
+              </div>
+              <div class="btn-group" role="group">
+                <button id="showLoadByUrl" type="button" class="btn btn-default">Add Markers by URL</button>
+              </div>
+            </div>
+
+            <form id="markerByFile" class="form-horizontal">
+              <div class="form-group">
+                <label class="col-sm-2 control-label">File input</label>
+                <div class="col-sm-10">
+                  <input type="file" id="makersFile">
+                  <p class="help-block">Archivo a agregar a la lista de marcadores (se ignoraran los que ya existen).</p>
+                </div>
+              </div>
+            </form>
+
+            <form id="markerByUrL" class="form-horizontal">
+              <div class="form-group">
+                <label class="col-sm-2 control-label">URL</label>
+                <div class="col-sm-10">
+                  <input id="markerUrl" type="url" class="form-control" placeholder="URL">
+                  <p class="help-block">URL to bookmark list (ignore existing ones).</p>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                  <div class="checkbox">
+                    <label>
+                      <input id="markerSingleUse" type="checkbox" checked> Single Use?
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div id="showPeriod" class="form-group">
+                <label class="col-sm-2 control-label">Period</label>
+                <div class="col-sm-10">
+                  <input id="markerLoadPeriod" type="number" class="form-control" placeholder="Period">
+                  <p class="help-block">The polling technique is applied to update the information loaded from the URL.</p>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                  <button type="submit" class="btn btn-default">Preload</button>
+                </div>
+              </div>
+            </form>
+
+            <div class="maxHeight">
+              <table id="showPreview" class="table table-condensed">
+                <caption>Preview</caption>
+                <thead>
+                  <th>Latitude</th>
+                  <th>Longitude</th>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button id="loadMarkers" type="button" class="btn btn-primary" data-dismiss="modal">Load data</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- build:js(.) scripts/vendor.js -->
     <!-- bower:js -->
