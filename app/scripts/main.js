@@ -1,5 +1,5 @@
 console.log('\'Allo \'Allo!');
-var map, marker;
+var map, marker, refreshIntervalId ;
 var lat,lon;
 var loadByFile = true;
 
@@ -84,7 +84,7 @@ function addMarker(lat, lng) {
   }
   if(!flag){
     var marker = new google.maps.Marker({
-      title: ""+(markers.length + 1),
+      label: ""+(markers.length + 1),
       position: new google.maps.LatLng({lat:latitude, lng:longitude}),
       map: map
     });
@@ -168,9 +168,12 @@ function parserCoordinate(text, coordRegExp, sepRegExp){
 
 function processMarker(lines){
   $("#showPreview > tbody").empty();
+  var latLabl = $("#latitudeLabel").val();
+  var lngLabl = $("#longitudeLabel").val();
+
   var assignator = $("#assignator").val();
-  var latRegexp = new RegExp("latitude("+assignator+")");
-  var lngRegexp = new RegExp("longitude("+assignator+")");
+  var latRegexp = new RegExp("("+latLabl+")("+assignator+")");
+  var lngRegexp = new RegExp("("+lngLabl+")("+assignator+")");
 
   var separator = $("#separator").val();
   var sepRegExp = new RegExp("("+separator+")");
@@ -195,9 +198,8 @@ function addPreloadCoordinateToView(lat, lng){
     $("#showPreview > tbody").append(tmp);
 }
 
-
-
 $(function() {
+  $.ajaxSetup({ cache: false });
   $("#showPeriod").hide();
   $('#showPreview').hide();
   if(loadByFile){
@@ -207,8 +209,6 @@ $(function() {
     $("#markerByFile").hide();
     $("#markerByUrL").show();
   }
-
-  
 
   $("#sendFocus").click(function(event){
     event.preventDefault();
@@ -318,6 +318,7 @@ $(function() {
   })
 
   $("#loadMarkers").click(function(){
+    var singleUse = $("#markerSingleUse").prop('checked');
     if(loadByFile || singleUse){
       $("#showPreview > tbody > tr").each(function (indx, element) {
         var latitude = $(element).find("td").eq(0).html();
@@ -325,16 +326,19 @@ $(function() {
         addMarker(latitude, longitude);        
       });
     } else {
-      var singleUse = $("#markerSingleUse").prop('checked');
       if(!singleUse){
         var period = new Number($("#markerLoadPeriod").val());
-        setInterval(function(){
+        refreshIntervalId = setInterval(function(){
+          console.log("Interval Call");
           var url = $("#markerUrl").val();
           $.get(url, function(text) {
             var latitude, longitude;
+            var latLabl = $("#latitudeLabel").val();
+            var lngLabl = $("#longitudeLabel").val();
+
             var assignator = $("#assignator").val();
-            var latRegexp = new RegExp("latitude("+assignator+")");
-            var lngRegexp = new RegExp("longitude("+assignator+")");
+            var latRegexp = new RegExp("("+latLabl+")("+assignator+")");
+            var lngRegexp = new RegExp("("+lngLabl+")("+assignator+")");
 
             var separator = $("#separator").val();
             var sepRegExp = new RegExp("("+separator+")");
@@ -345,6 +349,7 @@ $(function() {
               latitude = parserCoordinate(line, latRegexp, sepRegExp);
               longitude = parserCoordinate(line, lngRegexp, sepRegExp);
               if(latitude && longitude){
+                console.log("lat:"+latitude+",lng:"+longitude);
                 addMarker(latitude, longitude);
               }
             }

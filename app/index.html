@@ -182,10 +182,22 @@
           <div class="modal-body">
             
             <legend>
-              The format can be any, provided that the same line includes "latitude" and "longitude" used the operators described below.
+              The format can be any you want, you only need provided in the same line latitude and longitude and use operators and labels described below.
             </legend>
 
             <form class="advanceSetup row">
+              <div class="form-group col-xs-6">
+                <label class="control-label col-xs-6">Latitude Label</label>
+                <div class="col-xs-6">
+                  <input id="latitudeLabel" type="string" class="form-control text-right" value="latitude">
+                </div>
+              </div>
+              <div class="form-group col-xs-6">
+                <label class="control-label col-xs-6">Longitude Label</label>
+                <div  class="col-xs-6">
+                  <input id="longitudeLabel" type="string" class="form-control text-right" value="longitude">
+                </div>
+              </div>
               <div class="form-group col-xs-6">
                 <label class="control-label col-xs-6">Separator</label>
                 <div class="col-xs-6">
@@ -245,7 +257,7 @@
               </div>
               <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
-                  <button type="submit" class="btn btn-default">Preload</button>
+                  <button type="submit" class="btn btn-default pull-right">Preload</button>
                 </div>
               </div>
             </form>
